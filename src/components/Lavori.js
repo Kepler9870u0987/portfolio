@@ -9,7 +9,7 @@ const Lavori = () => {
 
         {/* Contenuto del secondo contenitore */}
         <div className="text-4xl text-gray-800 font-custom font-medium">
-          Benvenuto nella sezione di esplorazione
+          Benvenuto nella sezione di esplorazioneeeee
         </div>
       </div>
   );
