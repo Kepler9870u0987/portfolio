@@ -39,7 +39,7 @@ const Navbar = () => {
     setActiveIndex(index);
   };
   
-  // Inizializza e posiziona l'highlighter
+  // Initialize and position the highlighter
   useEffect(() => {
     if (
       menuContainerRef.current && 
@@ -59,7 +59,7 @@ const Navbar = () => {
     }
   }, []);
   
-  // Aggiorna la posizione dell'highlighter quando cambia l'elemento attivo
+  // Update highlighter position when active element changes
   useEffect(() => {
     if (navItemsRef.current.length > 0 && highlighterRef.current) {
       const activeItem = navItemsRef.current[activeIndex];
@@ -136,11 +136,11 @@ const Navbar = () => {
   }, []);
   
   return (
-    // Navbar con sfondo bianco molto trasparente, blur e ombra in basso
-    <nav className="bg-transparent backdrop-blur-sm text-gray-800 py-4 px-6 shadow-md shadow-gray-500/20 font-custom z-10">
+    // Fully transparent navbar with blur and shadow
+    <nav className="fixed top-0 left-0 right-0 bg-transparent backdrop-blur-sm text-gray-800 py-4 px-6 shadow-md shadow-gray-500/10 font-custom z-10">
       <div className="max-w-screen-xl flex items-center justify-between mx-auto">
         
-        {/* Logo a sinistra */}
+        {/* Logo on the left */}
         <div className="flex items-center">
           <a href="/" className="text-gray-800">
             <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" 
@@ -156,17 +156,17 @@ const Navbar = () => {
           </a>
         </div>
         
-        {/* Menu centrale - desktop */}
+        {/* Desktop menu */}
         <div className="hidden md:block">
-          {/* Contenitore menu con sfondo leggermente trasparente e blur */}
+          {/* Menu container with transparent background and blur */}
           <div
             ref={menuContainerRef}
-            className=" backdrop-blur-sm rounded-full px-2 py-1 relative"
+            className="relative bg-transparent rounded-full px-2 py-1"
           >
-            {/* Highlighter che si muove */}
+            {/* Moving highlighter */}
             <div
               ref={highlighterRef}
-              className="absolute  backdrop-blur-sm rounded-full top-1 left-0 z-0"
+              className="absolute bg-gray-200/40 backdrop-blur-sm rounded-full top-1 left-0 z-0"
               style={{ height: '38px' }}
             ></div>
             
@@ -235,7 +235,7 @@ const Navbar = () => {
           </div>
         </div>
         
-        {/* Pulsante Contact Me - desktop */}
+        {/* Desktop Contact Me button */}
         <div className="hidden md:block">
           <a
             ref={contactBtnRef}
@@ -246,7 +246,7 @@ const Navbar = () => {
           </a>
         </div>
         
-        {/* Menu hamburger - mobile */}
+        {/* Mobile hamburger menu */}
         <button
           ref={buttonRef}
           onClick={toggleMenu}
@@ -256,20 +256,20 @@ const Navbar = () => {
         </button>
       </div>
       
-      {/* Menu mobile */}
+      {/* Mobile menu */}
       <div
         ref={menuRef}
         className={`${isOpen ? 'flex' : 'hidden'} md:hidden flex-col mt-4`}
         style={{ opacity: 0 }}
       >
-        {/* Contenitore mobile con trasparenza e blur */}
-        <div className=" backdrop-blur-sm rounded-lg p-2 mx-auto w-full max-w-sm shadow-md shadow-gray-500/20 z-10">
+        {/* Mobile container with transparency and blur */}
+        <div className="bg-gray-100/60 backdrop-blur-sm rounded-lg p-2 mx-auto w-full max-w-sm shadow-md shadow-gray-500/20 z-10">
           <ul className="flex flex-col space-y-2">
             <li>
               <a
                 href="#"
                 className={`block py-2 px-4 text-gray-800 rounded-lg text-center ${
-                  activeIndex === 0 ? 'bg-transparent' : 'hover:bg-transparent'
+                  activeIndex === 0 ? 'bg-gray-200/30' : 'hover:bg-gray-200/20'
                 }`}
                 onClick={(e) => {
                   e.preventDefault();
@@ -284,7 +284,7 @@ const Navbar = () => {
               <a
                 href="#"
                 className={`block py-2 px-4 text-gray-800 rounded-lg text-center ${
-                  activeIndex === 0 ? 'bg-transparent' : 'hover:bg-transparent'
+                  activeIndex === 1 ? 'bg-gray-200/30' : 'hover:bg-gray-200/20'
                 }`}
                 onClick={(e) => {
                   e.preventDefault();
@@ -299,7 +299,7 @@ const Navbar = () => {
               <a
                 href="#"
                 className={`block py-2 px-4 text-gray-800 rounded-lg text-center ${
-                  activeIndex === 0 ? 'bg-transparent' : 'hover:bg-transparent'
+                  activeIndex === 2 ? 'bg-gray-200/30' : 'hover:bg-gray-200/20'
                 }`}
                 onClick={(e) => {
                   e.preventDefault();
@@ -314,7 +314,7 @@ const Navbar = () => {
               <a
                 href="#"
                 className={`block py-2 px-4 text-gray-800 rounded-lg text-center ${
-                  activeIndex === 0 ? 'bg-transparent' : 'hover:bg-transparent'
+                  activeIndex === 3 ? 'bg-gray-200/30' : 'hover:bg-gray-200/20'
                 }`}
                 onClick={(e) => {
                   e.preventDefault();
@@ -340,4 +340,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;
