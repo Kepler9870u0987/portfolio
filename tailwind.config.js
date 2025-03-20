@@ -10,26 +10,7 @@ module.exports = {
           secondary: '#333333',
         },
         fontFamily: {
-          sans: [
-            '-apple-system',
-            'BlinkMacSystemFont', 
-            '"Segoe UI"', 
-            'Roboto', 
-            'Oxygen',
-            'Ubuntu', 
-            'Cantarell', 
-            '"Open Sans"', 
-            '"Helvetica Neue"', 
-            'sans-serif',
-          ],
-          mono: [
-            'source-code-pro', 
-            'Menlo', 
-            'Monaco', 
-            'Consolas', 
-            '"Courier New"', 
-            'monospace',
-          ],
+          custom: ['HomePageFont', 'Roboto Flex', 'sans-serif']
         },
       },
     },

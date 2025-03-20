@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'HomePageFont';
+    src: url('./HelveticaNeueCyr/HelveticaNeueCyr_Light.ttf') format('ttf'), 
+         url('./HelveticaNeueCyr/HelveticaNeueCyr_Light.ttf') format('ttf');
+    font-weight: lighter;
+    font-style: normal;
+    font-display: swap; /* Per migliorare la performance di caricamento */
+  }
+  
+
+  
+  /* Aggiungi altre varianti del font se necessario */

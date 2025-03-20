@@ -1,97 +1,343 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaFacebook, FaInstagram, FaTiktok, FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes } from 'react-icons/fa';
 import { gsap } from 'gsap';
 
 const Navbar = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const menuRef = useRef(null);
-    const buttonRef = useRef(null);
-
-    const menuItems = [
-        { label: 'Home', href: '/' },
-        { label: 'Servizi', href: '/servizi' },
-        { label: 'Portfolio', href: '/portfolio' },
-        { label: 'Contattami', href: '/contattami' },
-    ];
-
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
+  const navItemsRef = useRef([]);
+  const highlighterRef = useRef(null);
+  const menuContainerRef = useRef(null);
+  
+  // Reset navItemsRef array
+  navItemsRef.current = [];
+  
+  // Add references to the array
+  const addToNavRefs = (el) => {
+    if (el && !navItemsRef.current.includes(el)) {
+      navItemsRef.current.push(el);
+    }
+  };
+  
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+  
+  const handleClickOutside = (event) => {
+    if (
+      menuRef.current && 
+      !menuRef.current.contains(event.target) && 
+      !buttonRef.current.contains(event.target)
+    ) {
+      setIsOpen(false);
+    }
+  };
+  
+  const handleNavClick = (index) => {
+    setActiveIndex(index);
+  };
+  
+  // Inizializza e posiziona l'highlighter
+  useEffect(() => {
+    if (
+      menuContainerRef.current && 
+      navItemsRef.current.length > 0 && 
+      highlighterRef.current
+    ) {
+      const activeItem = navItemsRef.current[activeIndex];
+      if (activeItem) {
+        const rect = activeItem.getBoundingClientRect();
+        gsap.set(highlighterRef.current, {
+          x: activeItem.offsetLeft,
+          width: rect.width,
+          height: rect.height,
+          borderRadius: '9999px'
+        });
+      }
+    }
+  }, []);
+  
+  // Aggiorna la posizione dell'highlighter quando cambia l'elemento attivo
+  useEffect(() => {
+    if (navItemsRef.current.length > 0 && highlighterRef.current) {
+      const activeItem = navItemsRef.current[activeIndex];
+      if (activeItem) {
+        gsap.to(highlighterRef.current, {
+          x: activeItem.offsetLeft,
+          width: activeItem.offsetWidth,
+          duration: 0.5,
+          ease: 'power3.out'
+        });
+      }
+    }
+  }, [activeIndex]);
+  
+  useEffect(() => {
+    // Mobile menu animation
+    if (isOpen) {
+      gsap.fromTo(
+        menuRef.current,
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }
+      );
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      if (menuRef.current) {
+        gsap.to(menuRef.current, {
+          opacity: 0,
+          y: -20,
+          duration: 0.3,
+          ease: 'power3.in'
+        });
+      }
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
     };
-
-    const handleClickOutside = (event) => {
-        if (menuRef.current && !menuRef.current.contains(event.target) && !buttonRef.current.contains(event.target)) {
-            setIsOpen(false);
+  }, [isOpen]);
+  
+  // Contact button animation
+  const contactBtnRef = useRef(null);
+  
+  useEffect(() => {
+    if (contactBtnRef.current) {
+      gsap.set(contactBtnRef.current, { scale: 1 });
+      
+      const handleMouseEnter = () => {
+        gsap.to(contactBtnRef.current, {
+          scale: 1.05,
+          duration: 0.3,
+          ease: 'back.out(1.5)'
+        });
+      };
+      
+      const handleMouseLeave = () => {
+        gsap.to(contactBtnRef.current, {
+          scale: 1,
+          duration: 0.3,
+          ease: 'power1.inOut'
+        });
+      };
+      
+      contactBtnRef.current.addEventListener('mouseenter', handleMouseEnter);
+      contactBtnRef.current.addEventListener('mouseleave', handleMouseLeave);
+      
+      return () => {
+        if (contactBtnRef.current) {
+          contactBtnRef.current.removeEventListener('mouseenter', handleMouseEnter);
+          contactBtnRef.current.removeEventListener('mouseleave', handleMouseLeave);
         }
-    };
-
-    useEffect(() => {
-        if (isOpen) {
-            gsap.to(menuRef.current, { height: 'auto', duration: 0.5, ease: 'power2.inOut' });
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            gsap.to(menuRef.current, { height: 0, duration: 0.5, ease: 'power2.inOut' });
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [isOpen]);
-
-    return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
-            {/* Sostituisci l'immagine con un placeholder */}
-            <img src="https://via.placeholder.com/150x50.png?text=Logo+Placeholder" className="h-8" alt="Logo" />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">React Custom Template</span>
-        </a>
-        <button data-collapse-toggle="navbar-dropdown" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-dropdown" aria-expanded="false">
-            <span className="sr-only">Open main menu</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+      };
+    }
+  }, []);
+  
+  return (
+    // Navbar con sfondo bianco molto trasparente, blur e ombra in basso
+    <nav className="bg-transparent backdrop-blur-sm text-gray-800 py-4 px-6 shadow-md shadow-gray-500/20 font-custom z-10">
+      <div className="max-w-screen-xl flex items-center justify-between mx-auto">
+        
+        {/* Logo a sinistra */}
+        <div className="flex items-center">
+          <a href="/" className="text-gray-800">
+            <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" 
+                 xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M4 6H20M4 12H20M4 18H20"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
+          </a>
+        </div>
+        
+        {/* Menu centrale - desktop */}
+        <div className="hidden md:block">
+          {/* Contenitore menu con sfondo leggermente trasparente e blur */}
+          <div
+            ref={menuContainerRef}
+            className=" backdrop-blur-sm rounded-full px-2 py-1 relative"
+          >
+            {/* Highlighter che si muove */}
+            <div
+              ref={highlighterRef}
+              className="absolute  backdrop-blur-sm rounded-full top-1 left-0 z-0"
+              style={{ height: '38px' }}
+            ></div>
+            
+            <ul className="flex space-x-1 relative z-10">
+              <li>
+                <a
+                  ref={addToNavRefs}
+                  href="#"
+                  className={`block py-2 px-4 rounded-full transition-colors duration-300 relative z-10 ${
+                    activeIndex === 0 ? 'text-gray-800' : 'text-gray-600'
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(0);
+                  }}
+                >
+                  Home
+                </a>
+              </li>
+              <li>
+                <a
+                  ref={addToNavRefs}
+                  href="#"
+                  className={`block py-2 px-4 rounded-full transition-colors duration-300 relative z-10 ${
+                    activeIndex === 1 ? 'text-gray-800' : 'text-gray-600'
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(1);
+                  }}
+                >
+                  About
+                </a>
+              </li>
+              <li>
+                <a
+                  ref={addToNavRefs}
+                  href="#"
+                  className={`block py-2 px-4 rounded-full transition-colors duration-300 relative z-10 ${
+                    activeIndex === 2 ? 'text-gray-800' : 'text-gray-600'
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(2);
+                  }}
+                >
+                  Work
+                </a>
+              </li>
+              <li>
+                <a
+                  ref={addToNavRefs}
+                  href="#"
+                  className={`block py-2 px-4 rounded-full transition-colors duration-300 relative z-10 ${
+                    activeIndex === 3 ? 'text-gray-800' : 'text-gray-600'
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(3);
+                  }}
+                >
+                  Reviews
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        {/* Pulsante Contact Me - desktop */}
+        <div className="hidden md:block">
+          <a
+            ref={contactBtnRef}
+            href="/contact"
+            className="bg-gray-800 text-white px-4 py-2 rounded-full font-medium hover:bg-gray-700 transition-colors"
+          >
+            Contact Me
+          </a>
+        </div>
+        
+        {/* Menu hamburger - mobile */}
+        <button
+          ref={buttonRef}
+          onClick={toggleMenu}
+          className="md:hidden text-gray-800"
+        >
+          {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
         </button>
-        <div className="hidden w-full md:block md:w-auto" id="navbar-dropdown">
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+      </div>
+      
+      {/* Menu mobile */}
+      <div
+        ref={menuRef}
+        className={`${isOpen ? 'flex' : 'hidden'} md:hidden flex-col mt-4`}
+        style={{ opacity: 0 }}
+      >
+        {/* Contenitore mobile con trasparenza e blur */}
+        <div className=" backdrop-blur-sm rounded-lg p-2 mx-auto w-full max-w-sm shadow-md shadow-gray-500/20 z-10">
+          <ul className="flex flex-col space-y-2">
             <li>
-              <a href="#" className="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent" aria-current="page">Home</a>
+              <a
+                href="#"
+                className={`block py-2 px-4 text-gray-800 rounded-lg text-center ${
+                  activeIndex === 0 ? 'bg-transparent' : 'hover:bg-transparent'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(0);
+                  setIsOpen(false);
+                }}
+              >
+                Home
+              </a>
             </li>
             <li>
-                <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">Dropdown <svg className="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-      </svg></button>
-                <div id="dropdownNavbar" className="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-                    <ul className="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
-                      <li>
-                        <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
-                      </li>
-                      <li>
-                        <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
-                      </li>
-                      <li>
-                        <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
-                      </li>
-                    </ul>
-                    <div className="py-1">
-                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
-                    </div>
-                </div>
+              <a
+                href="#"
+                className={`block py-2 px-4 text-gray-800 rounded-lg text-center ${
+                  activeIndex === 0 ? 'bg-transparent' : 'hover:bg-transparent'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(1);
+                  setIsOpen(false);
+                }}
+              >
+                About
+              </a>
             </li>
             <li>
-              <a href="#" className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Services</a>
+              <a
+                href="#"
+                className={`block py-2 px-4 text-gray-800 rounded-lg text-center ${
+                  activeIndex === 0 ? 'bg-transparent' : 'hover:bg-transparent'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(2);
+                  setIsOpen(false);
+                }}
+              >
+                Work
+              </a>
             </li>
             <li>
-              <a href="#" className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Pricing</a>
+              <a
+                href="#"
+                className={`block py-2 px-4 text-gray-800 rounded-lg text-center ${
+                  activeIndex === 0 ? 'bg-transparent' : 'hover:bg-transparent'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(3);
+                  setIsOpen(false);
+                }}
+              >
+                Reviews
+              </a>
             </li>
-            <li>
-              <a href="#" className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Contact</a>
+            <li className="pt-2">
+              <a
+                href="/contact"
+                className="block bg-gray-800 text-white px-4 py-2 rounded-full font-medium text-center hover:bg-gray-700 transition-colors"
+              >
+                Contact Me
+              </a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
-    );
+  );
 };
 
-export default Navbar;
+export default Navbar; 
