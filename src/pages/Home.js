@@ -138,9 +138,8 @@ const Home = () => {
         </div>
       </section>
       
-      {/* Altre sezioni se necessario */}
-      
-      <style jsx global>{`
+      {/* Alternative approach for global styles */}
+      <style>{`
         html, body {
           margin: 0;
           padding: 0;
