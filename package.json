@@ -19,6 +19,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "colorthief": "^2.6.0",
     "fs-extra": "^11.3.0",
     "gsap": "^3.12.4",
     "locomotive-scroll": "^4.1.4",
