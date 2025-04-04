@@ -1,20 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import ColorThief from 'colorthief';
 
 const ProjectCard = ({ 
   image, 
   titolo, 
   subtitle = 'Descrizione non disponibile',
-  backgroundColor = 'dark',
   textColor = 'light',
   onViewCase 
 }) => {
-  const backgroundColors = {
-    dark: 'bg-[#18181b]',
-    sand: 'bg-[#d2b59b]',
-    yellow: 'bg-[#fcd34d]',
-    military: 'bg-[#2f3a2f]'
-  };
-   
   const textColors = {
     light: {
       title: 'text-white',
@@ -27,20 +20,39 @@ const ProjectCard = ({
       button: 'text-black border-black/30 hover:bg-black/10'
     }
   };
- 
-  const bgColor = backgroundColors[backgroundColor];
+  
   const currentTextColor = textColors[textColor];
- 
+  const [gradientBg, setGradientBg] = useState('');
+  const imgRef = useRef(null);
+
+  const handleImageLoad = () => {
+    if (imgRef.current && imgRef.current.complete) {
+      console.log('Immagine caricata:', imgRef.current.src);
+      const colorThief = new ColorThief();
+      // Ottieni una palette con 3 colori
+      const palette = colorThief.getPalette(imgRef.current, 3);
+      if (palette && palette.length >= 3) {
+        console.log('Palette:', palette);
+        // Costruisci un gradiente con i 3 colori
+        const gradient = `linear-gradient(135deg, rgb(${palette[0].join(',')}) 0%, rgb(${palette[1].join(',')}) 50%, rgb(${palette[2].join(',')}) 100%)`;
+        setGradientBg(gradient);
+      } else {
+        console.log('Palette non sufficiente.');
+      }
+    } else {
+      console.log('L\'immagine non è ancora completamente caricata.');
+    }
+  };
+
   const handleViewCase = () => {
     if (onViewCase) {
       onViewCase();
     }
   };
- 
+
   return (
     <div 
       className={`
-        ${bgColor} 
         rounded-2xl 
         overflow-hidden 
         relative 
@@ -51,11 +63,11 @@ const ProjectCard = ({
         hover:shadow-2xl 
         group
       `}
+      style={{ backgroundImage: gradientBg || undefined }}
     >
       <div className="p-6 flex flex-col h-full">
         <div 
           className={`
-            bg-white/10 
             rounded-xl 
             overflow-hidden 
             h-[21rem]
@@ -70,9 +82,12 @@ const ProjectCard = ({
           `}
         >
           <img
+            ref={imgRef}
             src={image || 'https://via.placeholder.com/400x300'}
             alt={`${titolo} project`}
             className="max-w-full max-h-full object-contain"
+            crossOrigin="anonymous"
+            onLoad={handleImageLoad}
           />
           <div 
             className="
@@ -118,10 +133,10 @@ const ProjectCard = ({
           </div>
         </div>
         <div className="flex-grow">
-          <h3 className={`text-2xl font-bold ${currentTextColor.title} mb-2`}>
+          <h3 className={`text-4xl font-custom font-bold ${currentTextColor.title} mb-2`}>
             {titolo}
           </h3>
-          <p className={`text-sm ${currentTextColor.subtitle} mb-6`}>
+          <p className={`text-lg font-cusotm ${currentTextColor.subtitle} mb-6`}>
             {subtitle}
           </p>
         </div>
@@ -131,16 +146,16 @@ const ProjectCard = ({
             className={`
               inline-flex 
               items-center 
-              text-sm 
+              text-2xl 
               ${currentTextColor.button} 
               border 
               rounded-full 
-              px-5 
-              py-2 
+              px-10 
+              py-4 
               transition-all 
               duration-300 
-              hover:pl-6 
-              hover:pr-4
+              hover:pl-12 
+              hover:pr-8
             `}
           >
             <span>view case</span>
@@ -150,7 +165,7 @@ const ProjectCard = ({
               viewBox="0 0 24 24" 
               strokeWidth="1.5" 
               stroke="currentColor" 
-              className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+              className="w-8 h-8 ml-4 transition-transform group-hover:translate-x-2"
             >
               <path 
                 strokeLinecap="round" 
